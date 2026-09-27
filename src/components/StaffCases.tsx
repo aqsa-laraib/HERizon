@@ -1,0 +1,3 @@
+import React from 'react';
+import {useApp} from '../context/AppContext';
+export default function StaffCases(){const {supportCase,setView}=useApp();return <div><h1 className="text-2xl font-semibold mb-5">Support cases</h1>{supportCase?<button className="card w-full text-left flex justify-between" onClick={()=>setView('staffCaseDetail')}><strong>{supportCase.id} · Student support</strong><span>{supportCase.overall} ↗</span></button>:<div className="empty-state"><p>No cases yet. Create a request from Find support.</p><button className="btn-primary" onClick={()=>setView('resolve')}>Create a request</button></div>}</div>}
