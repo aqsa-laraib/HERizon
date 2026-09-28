@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {matchRoute,localAnalysis,moderate,canCreateCircle} from '../src/domain/logic.ts';
+const trip={from:'Janakpuri West',to:'Kashmere Gate',date:'2026-09-28',time:'08:00',transport:'Metro'};
+test('area aliases and shared directed segments match without exact strings',()=>{const result=matchRoute(trip,{...trip,from:'Janakpuri',time:'08:10'});assert.equal(result.compatible,true);assert.equal(result.overlap,100);assert.equal(result.timeGap,10);});
+test('date, direction, time and transport mismatches are excluded',()=>{for(const other of [{...trip,date:'2026-09-29'},{...trip,from:trip.to,to:trip.from},{...trip,time:'10:00'},{...trip,transport:'Bus'}])assert.equal(matchRoute(trip,other).compatible,false);});
+test('partial corridor intersection returns a measured overlap',()=>{const result=matchRoute(trip,{...trip,from:'Rajouri Garden'});assert.equal(result.overlap,75);assert.equal(result.compatible,true);});
+test('community threshold counts distinct opt-ins and requires self consent',()=>{const ids=Array.from({length:10},(_,i)=>String(i));assert.equal(canCreateCircle(ids,true),true);assert.equal(canCreateCircle(ids,false),false);assert.equal(canCreateCircle(Array(18).fill('same'),true),false);assert.equal(canCreateCircle(ids.slice(1),true),false);});
+test('emotional suggestions vary with input and never claim an LLM',()=>{assert.deepEqual(localAnalysis('I miss home and feel lonely').themes,['Homesickness','Loneliness']);assert.equal(localAnalysis('my exam is tomorrow').themes[0],'Academic pressure');assert.equal(localAnalysis('It was an ordinary day').themes.length,0);assert.equal(localAnalysis('I am stressed').source,'local');});
+test('privacy and harmful content checks hold contact details and harassment',()=>{for(const input of ['Email me at student@igdtuw.ac.in','Call +91 98765 43210','My flat 123 is nearby','you are an idiot','https://scam.example',''])assert.equal(moderate(input).allowed,false);assert.equal(moderate('I am feeling nervous about my exam.').allowed,true);});
+test('high risk text raises a support flag without automatic sharing',()=>{assert.equal(localAnalysis('I want to hurt myself').highRisk,true);assert.equal(localAnalysis('I need a study buddy').highRisk,false);});

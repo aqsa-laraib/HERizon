@@ -1,0 +1,10 @@
+import { cpSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { resolve, relative, join } from 'node:path';
+const root=resolve(import.meta.dirname,'..');
+const destination=resolve(root,'docs');
+if(relative(root,destination)!=='docs')throw new Error('Unexpected publish directory');
+mkdirSync(destination,{recursive:true});
+for(const name of readdirSync(destination))rmSync(join(destination,name),{recursive:true,force:true});
+cpSync(resolve(root,'dist'),destination,{recursive:true});
+writeFileSync(join(destination,'.nojekyll'),'');
+console.log('Compiled website copied to docs/ for GitHub Pages.');

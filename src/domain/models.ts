@@ -1,0 +1,14 @@
+export type Page = 'home'|'travel'|'wellbeing'|'discover'|'messages'|'space'|'privacy'|'safety'|'community';
+export type Profile = {name:string;email:string;branch:string;year:string;interests:string[];nickname:string;commute:string};
+export type Plan = {id:string;from:string;to:string;date:string;time:string;transport:string};
+export type Peer = {id:string;nickname:string;theme:string;sample:boolean};
+export type Analysis = {themes:string[];feeling:string;reflection:string;source:'llm'|'local';highRisk:boolean};
+export type Message = {id:string;sender:string;text:string;time:string};
+export type Connection = {id:string;peer:Peer;kind:'travel'|'peer';route?:string;status:'pending'|'accepted'|'declined'|'ignored'|'blocked'|'left';messages:Message[];created:string};
+export type Circle = {id:string;theme:string;joined:boolean;posts:Message[];reactions:string[]};
+export type Report = {id:string;target:string;reason:string;time:string;status:'Local draft'|'Pending review'};
+export type Consent = {id:string;purpose:string;fields:string[];time:string;revoked?:boolean};
+export type Support = {id:string;summary:string;contact:string;time:string;status:string;consentId:string};
+export type Notice = {id:string;text:string;read:boolean};
+export type Store = {connections:Connection[];plans:Plan[];circles:Circle[];reports:Report[];consents:Consent[];support:Support[];notices:Notice[];saved:string[];blocked:string[];interests:string[];discoverable:boolean;notifications:boolean};
+export const initialStore = (): Store => ({connections:[],plans:[],circles:[],reports:[],consents:[],support:[],notices:[],saved:[],blocked:[],interests:[],discoverable:false,notifications:true});
